@@ -33,6 +33,7 @@ public class ProductListPageServletTest {
     @Before
     public void setup(){
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
+        //when(request.getParameter(ProductListPageServlet.QUERY));
     }
 
     @Test

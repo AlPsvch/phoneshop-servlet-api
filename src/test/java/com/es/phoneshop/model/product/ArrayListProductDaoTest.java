@@ -25,7 +25,7 @@ public class ArrayListProductDaoTest {
 
     @Test
     public void testFindProductsNoResults() {
-        assertTrue(productDao.findProducts().isEmpty());
+        assertTrue(productDao.findProducts(null).isEmpty());
     }
 
     @Test
@@ -33,18 +33,18 @@ public class ArrayListProductDaoTest {
         Product product = new Product(1L, "sgs", "Samsung Galaxy S", new BigDecimal(100), usd, 100, imageURL);
 
         productDao.save(product);
-        assertEquals(1, productDao.findProducts().size());
+        assertEquals(1, productDao.findProducts(null).size());
         productDao.delete(1L);
-        assertEquals(0, productDao.findProducts().size());
+        assertEquals(0, productDao.findProducts(null).size());
     }
 
-    @Test (expected = IllegalArgumentException.class)
-    public void testGetProduct(){
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetProduct() {
         productDao.getProduct(1L);
     }
 
     @Test
-    public void testFindProducts(){
+    public void testFindProducts() {
         Product product1 = new Product(1L, "sgs", "Samsung Galaxy S", new BigDecimal(100), usd, 0, imageURL);
         Product product2 = new Product(2L, "sgs", "Samsung Galaxy S", null, usd, 100, imageURL);
         Product product3 = new Product(3L, "sgs", "Samsung Galaxy S", new BigDecimal(100), usd, 100, imageURL);
@@ -53,6 +53,6 @@ public class ArrayListProductDaoTest {
         productDao.save(product2);
         productDao.save(product3);
 
-        assertEquals(1, productDao.findProducts().size());
+        assertEquals(1, productDao.findProducts("galaxy").size());
     }
 }
