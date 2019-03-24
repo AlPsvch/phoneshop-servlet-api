@@ -16,7 +16,41 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     @Override
-    public synchronized List<Product> findProducts(String query) {
+    public synchronized List<Product> findProducts(String query, String order, String sort) {
+        List<Product> finalProducts = findUnsortedProducts(query);
+
+        if(sort!= null && !sort.isEmpty()){
+            return sortProducts(finalProducts, order, sort);
+        }
+
+        return finalProducts;
+    }
+
+    @Override
+    public synchronized void save(Product product) throws IllegalArgumentException {
+        if (products.stream()
+                .anyMatch((p) -> p.getId().equals(product.getId()))) {
+            throw new IllegalArgumentException("Product with such ID already exists");
+        } else {
+            products.add(product);
+        }
+    }
+
+    @Override
+    public synchronized void delete(Long id) throws IllegalArgumentException {
+        products.stream()
+                .filter((p) -> p.getId().equals(id))
+                .findFirst()
+                .map((p) -> products.remove(p))
+                .orElseThrow(() -> new IllegalArgumentException("There is no product with such ID."));
+    }
+
+    private Stream<Product> findActualProducts() {
+        return products.stream()
+                .filter((p) -> p.getPrice() != null && p.getStock() > 0);
+    }
+
+    private List<Product> findUnsortedProducts(String query) {
         if (query != null && !query.trim().isEmpty()) {
             String[] splitQuery = query.toLowerCase().split(" ");
 
@@ -58,27 +92,23 @@ public class ArrayListProductDao implements ProductDao {
         return number;
     }
 
-    @Override
-    public synchronized void save(Product product) throws IllegalArgumentException {
-        if (products.stream()
-                .anyMatch((p) -> p.getId().equals(product.getId()))) {
-            throw new IllegalArgumentException("Product with such ID already exists");
-        } else {
-            products.add(product);
+    private List<Product> sortProducts(List<Product> unsortedProducts, String order, String sort){
+        List<Product> sortedProducts = unsortedProducts;
+        if ("description".equalsIgnoreCase(sort)) {
+            sortedProducts = sortedProducts
+                    .stream()
+                    .sorted("asc".equalsIgnoreCase(order) ?
+                            Comparator.comparing(Product::getDescription) :
+                            Comparator.comparing(Product::getDescription).reversed())
+                    .collect(Collectors.toList());
+        } else if ("price".equalsIgnoreCase(sort)) {
+            sortedProducts = sortedProducts
+                    .stream()
+                    .sorted("asc".equalsIgnoreCase(order) ?
+                            Comparator.comparing(Product::getPrice) :
+                            Comparator.comparing(Product::getPrice).reversed())
+                    .collect(Collectors.toList());
         }
-    }
-
-    @Override
-    public synchronized void delete(Long id) throws IllegalArgumentException {
-        products.stream()
-                .filter((p) -> p.getId().equals(id))
-                .findFirst()
-                .map((p) -> products.remove(p))
-                .orElseThrow(() -> new IllegalArgumentException("There is no product with such ID."));
-    }
-
-    private Stream<Product> findActualProducts() {
-        return products.stream()
-                .filter((p) -> p.getPrice() != null && p.getStock() > 0);
+        return sortedProducts;
     }
 }
