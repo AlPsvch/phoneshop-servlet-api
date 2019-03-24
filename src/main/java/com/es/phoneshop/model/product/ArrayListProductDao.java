@@ -5,6 +5,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ArrayListProductDao implements ProductDao {
+    private static ArrayListProductDao instance;
+
+    public static synchronized ArrayListProductDao getInstance(){
+        if(instance == null){
+            instance = new ArrayListProductDao();
+        }
+        return instance;
+    }
+
     private List<Product> products = new ArrayList<>();
 
     @Override
