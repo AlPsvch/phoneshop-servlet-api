@@ -1,5 +1,7 @@
 package com.es.phoneshop.model.product;
 
+import com.es.phoneshop.exceptions.ProductNotFoundException;
+
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -17,11 +19,11 @@ public class ArrayListProductDao implements ProductDao {
     private List<Product> products = new ArrayList<>();
 
     @Override
-    public synchronized Product getProduct(Long id) throws IllegalArgumentException {
+    public synchronized Product getProduct(Long id) throws ProductNotFoundException {
         return findActualProducts()
                 .filter((p) -> p.getId().equals(id))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("There is no product with such ID."));
+                .orElseThrow(() -> new ProductNotFoundException("Product with code " + id + " not found."));
     }
 
     @Override
@@ -46,12 +48,12 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     @Override
-    public synchronized void delete(Long id) throws IllegalArgumentException {
+    public synchronized void delete(Long id) throws ProductNotFoundException {
         products.stream()
                 .filter((p) -> p.getId().equals(id))
                 .findFirst()
                 .map((p) -> products.remove(p))
-                .orElseThrow(() -> new IllegalArgumentException("There is no product with such ID."));
+                .orElseThrow(() -> new ProductNotFoundException("Product with code " + id + " not found."));
     }
 
     private Stream<Product> findActualProducts() {
