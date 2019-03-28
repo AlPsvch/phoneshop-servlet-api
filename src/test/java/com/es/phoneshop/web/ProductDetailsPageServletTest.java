@@ -1,6 +1,8 @@
 package com.es.phoneshop.web;
 
+import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,14 +14,18 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Currency;
+
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ProductListPageServletTest {
+public class ProductDetailsPageServletTest {
     @Mock
     private HttpServletRequest request;
     @Mock
@@ -29,18 +35,21 @@ public class ProductListPageServletTest {
     @Mock
     private ServletConfig servletConfig;
 
-
-    private ProductListPageServlet servlet = new ProductListPageServlet();
-    private String query = "samsung";
-    private String order = "asc";
-    private String sort = "description";
+    private ProductDetailsPageServlet servlet = new ProductDetailsPageServlet();
+    private ArrayListProductDao productDao = ArrayListProductDao.getInstance();
 
     @Before
     public void setup() {
+        Currency usd = Currency.getInstance("USD");
+        productDao.save(new Product(1L, "sgs", "Samsung Galaxy S", new BigDecimal(100), usd, 5, ""));
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
-        when(request.getParameter(ProductListPageServlet.QUERY)).thenReturn(query);
-        when(request.getParameter(ProductListPageServlet.ORDER)).thenReturn(order);
-        when(request.getParameter(ProductListPageServlet.SORT)).thenReturn(sort);
+        when(request.getRequestURI()).thenReturn("/phoneshop-servlet-api/products/1");
+        when(request.getServletPath()).thenReturn("/products");
+    }
+
+    @After
+    public void complete() {
+        productDao.delete(1L);
     }
 
     @Test
