@@ -3,6 +3,8 @@ package com.es.phoneshop.web;
 import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.model.recentProducts.HttpSessionRecentService;
+import com.es.phoneshop.model.recentProducts.RecentService;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -20,10 +22,12 @@ public class ProductListPageServlet extends HttpServlet {
     protected static final String ORDER = "order";
     protected static final String SORT = "sort";
     private ProductDao productDao;
+    private RecentService recentService;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         productDao = ArrayListProductDao.getInstance();
+        recentService = HttpSessionRecentService.getInstance();
     }
 
     @Override
@@ -32,6 +36,7 @@ public class ProductListPageServlet extends HttpServlet {
         String order = request.getParameter(ORDER);
         String sort = request.getParameter(SORT);
 
+        request.setAttribute("recentProducts", recentService.getRecentViews(request).getRecentlyViewed());
         request.setAttribute("products", productDao.findProducts(query, order, sort));
         request.getRequestDispatcher("/WEB-INF/pages/productList.jsp").forward(request, response);
     }

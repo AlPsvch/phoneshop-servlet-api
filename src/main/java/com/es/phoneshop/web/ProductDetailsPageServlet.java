@@ -6,6 +6,9 @@ import com.es.phoneshop.model.cart.CartService;
 import com.es.phoneshop.model.cart.HttpSessionCartService;
 import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.model.recentProducts.HttpSessionRecentService;
+import com.es.phoneshop.model.recentProducts.RecentService;
+import com.es.phoneshop.model.recentProducts.RecentViews;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -19,20 +22,25 @@ public class ProductDetailsPageServlet extends HttpServlet {
     protected static final String ERROR = "error";
     private ProductDao productDao;
     private CartService cartService;
+    private RecentService recentService;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         productDao = ArrayListProductDao.getInstance();
         cartService = HttpSessionCartService.getInstance();
+        recentService = HttpSessionRecentService.getInstance();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Long productId = getProductId(request);
+        RecentViews recentViews = recentService.getRecentViews(request);
 
+        request.setAttribute("recentProducts", recentViews.getRecentlyViewed());
         request.setAttribute("product", productDao.getProduct(productId));
         request.setAttribute("cart", cartService.getCart(request));
         request.getRequestDispatcher("/WEB-INF/pages/product.jsp").forward(request, response);
+        recentService.add(recentViews, productId);
     }
 
     @Override

@@ -49,6 +49,5 @@ public class HttpSessionCartService implements CartService {
             CartItem cartItem = new CartItem(product, quantity);
             cart.getCartItems().add(cartItem);
         }
-
     }
 }
