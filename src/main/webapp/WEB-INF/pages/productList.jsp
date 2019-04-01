@@ -54,7 +54,8 @@
                     <img class="product-tile"
                          src="https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/${product1.imageUrl}">
                     <br>
-                    <a href="products/${product1.id}">${product1.description}</a> <br>
+                    <a href="products/${product1.id}">${product1.description}</a>
+                    <br>
                     <fmt:formatNumber value="${product1.price}" type="currency"
                                       currencySymbol="${product1.currency.symbol}"/>
                 </td>

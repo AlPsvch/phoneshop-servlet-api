@@ -34,7 +34,9 @@
             </td>
         </tr>
     </table>
-    <form method="post" action="${pageContext.servletContext.contextPath}/products/${product.id}">
+
+    <c:url value="/products/${product.id}" var="thisProductPage"/>
+    <form method="post" action="${thisProductPage}">
         <p>
             <input name="quantity" value="${not empty param.quantity ? param.quantity : 1}" style="text-align: right">
             <button>Add to cart</button>

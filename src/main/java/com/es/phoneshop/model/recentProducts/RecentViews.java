@@ -6,11 +6,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 
 public class RecentViews {
-    private Deque<Product> recentlyViewed;
-
-    public RecentViews() {
-        recentlyViewed = new LinkedList<>();
-    }
+    private Deque<Product> recentlyViewed = new LinkedList<>();
 
     public Deque<Product> getRecentlyViewed() {
         return recentlyViewed;

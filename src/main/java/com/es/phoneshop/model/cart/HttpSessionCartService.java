@@ -34,24 +34,21 @@ public class HttpSessionCartService implements CartService {
     public synchronized void add(Cart cart, long productId, int quantity) throws OutOfStockException {
         Product product = ArrayListProductDao.getInstance().getProduct(productId);
 
-        if (quantity > product.getStock() || quantity <= 0) {
-            throw new OutOfStockException("Not enough stock or incorrect stock input. Product stock is " + product.getStock());
-        }
-
         Optional<CartItem> cartItemOptional = cart.getCartItems().stream()
                 .filter(cartItem -> Long.valueOf(productId).equals(cartItem.getProduct().getId()))
                 .findAny();
 
+        int totalQuantity = cartItemOptional.map(c -> c.getQuantity() + quantity).orElse(quantity);
+
+        if (totalQuantity > product.getStock() || quantity <= 0) {
+            throw new OutOfStockException("Not enough stock or incorrect stock input. Product stock is " + product.getStock());
+        }
+
         if (cartItemOptional.isPresent()) {
             CartItem cartItem = cartItemOptional.get();
-
-            if ((cartItem.getQuantity() + quantity) > product.getStock()) {
-                throw new OutOfStockException("Not enough stock. Product stock is " + product.getStock());
-            }
-
-            cartItem.setQuantity(cartItem.getQuantity() + quantity);
+            cartItem.setQuantity(totalQuantity);
         } else {
-            CartItem cartItem = new CartItem(product, quantity);
+            CartItem cartItem = new CartItem(product, totalQuantity);
             cart.getCartItems().add(cartItem);
         }
     }

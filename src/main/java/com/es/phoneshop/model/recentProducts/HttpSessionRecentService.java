@@ -40,14 +40,11 @@ public class HttpSessionRecentService implements RecentService {
                 .filter(p -> Long.valueOf(productId).equals(p.getId()))
                 .findAny();
 
+        recentViewsList.addFirst(product);
         if (productOptional.isPresent()) {
-            recentViewsList.remove(product);
-            recentViewsList.addFirst(product);
-        } else {
-            recentViewsList.addFirst(product);
-            if (recentViewsList.size() > 3) {
-                recentViewsList.removeLast();
-            }
+            recentViewsList.removeLastOccurrence(product);
+        } else if (recentViewsList.size() > 3) {
+            recentViewsList.removeLast();
         }
     }
 }

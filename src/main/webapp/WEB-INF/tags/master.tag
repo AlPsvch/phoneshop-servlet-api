@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ tag trimDirectiveWhitespaces="true" %>
 <%@ attribute name="pageTitle" required="true" %>
 
@@ -10,7 +11,8 @@
 <body class="product-list">
   <header>
     <a href="${pageContext.servletContext.contextPath}">
-      <img src="${pageContext.servletContext.contextPath}/images/logo.svg"/>
+      <c:url value="/images/logo.svg" var="imageUrl"/>
+      <img src="${imageUrl}"/>
       PhoneShop
     </a>
     Cart: ${cart}
