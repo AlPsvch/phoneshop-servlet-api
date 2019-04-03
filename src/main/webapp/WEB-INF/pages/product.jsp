@@ -5,6 +5,9 @@
 
 <jsp:useBean id="product" type="com.es.phoneshop.model.product.Product" scope="request"/>
 <tags:master pageTitle="Product Description">
+    <c:if test="${not empty param.message}">
+        <br><span style="color:forestgreen">${param.message}</span>
+    </c:if>
     <p>
         Product Description.
     </p>
@@ -18,16 +21,31 @@
             <td class="price">Price</td>
         </tr>
         </thead>
-            <tr>
-                <td>${product.id}</td>
-                <td>
-                    <img class="product-tile" src="https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/${product.imageUrl}">
-                </td>
-                <td>${product.description}</td>
-                <td>${product.stock}</td>
-                <td class="price">
-                    <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="${product.currency.symbol}"/>
-                </td>
-            </tr>
+        <tr>
+            <td>${product.id}</td>
+            <td>
+                <img class="product-tile"
+                     src="https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/${product.imageUrl}">
+            </td>
+            <td>${product.description}</td>
+            <td>${product.stock}</td>
+            <td class="price">
+                <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="${product.currency.symbol}"/>
+            </td>
+        </tr>
     </table>
+
+    <c:url value="/products/${product.id}" var="thisProductPage"/>
+    <form method="post" action="${thisProductPage}">
+        <p>
+            <input name="quantity" value="${not empty param.quantity ? param.quantity : 1}" style="text-align: right">
+            <button>Add to cart</button>
+            <c:if test="${not empty error}">
+                <br><span style="color:red">${error}</span>
+            </c:if>
+        </p>
+    </form>
+
+    <tags:recent recentProducts="${recentProducts}"/>
+
 </tags:master>

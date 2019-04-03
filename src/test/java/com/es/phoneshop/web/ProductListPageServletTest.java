@@ -1,6 +1,8 @@
 package com.es.phoneshop.web;
 
 import com.es.phoneshop.model.product.Product;
+import com.es.phoneshop.model.recentProducts.RecentService;
+import com.es.phoneshop.model.recentProducts.RecentViews;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,9 +14,12 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Deque;
+import java.util.LinkedList;
 
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -28,6 +33,8 @@ public class ProductListPageServletTest {
     private RequestDispatcher requestDispatcher;
     @Mock
     private ServletConfig servletConfig;
+    @Mock
+    private HttpSession session;
 
 
     private ProductListPageServlet servlet = new ProductListPageServlet();
@@ -41,6 +48,7 @@ public class ProductListPageServletTest {
         when(request.getParameter(ProductListPageServlet.QUERY)).thenReturn(query);
         when(request.getParameter(ProductListPageServlet.ORDER)).thenReturn(order);
         when(request.getParameter(ProductListPageServlet.SORT)).thenReturn(sort);
+        when(request.getSession()).thenReturn(session);
     }
 
     @Test
