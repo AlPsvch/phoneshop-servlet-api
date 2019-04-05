@@ -57,10 +57,10 @@ public class HttpSessionCartService implements CartService {
     }
 
     @Override
-    public synchronized void update(Cart cart, long productId, int quantity) throws OutOfStockException{
+    public synchronized void update(Cart cart, long productId, int quantity) throws OutOfStockException {
         Product product = ArrayListProductDao.getInstance().getProduct(productId);
 
-        if(quantity > product.getStock() || quantity <= 0) {
+        if (quantity > product.getStock() || quantity <= 0) {
             throw new OutOfStockException("Not enough stock. Product stock is " + product.getStock());
         }
 
@@ -73,11 +73,18 @@ public class HttpSessionCartService implements CartService {
         recalculateTotalPrice(cart);
     }
 
-    private void recalculateTotalPrice(Cart cart) {
-        BigDecimal newTotalPrice =  cart.getCartItems().stream()
-                .map(cartItem -> cartItem.getProduct().getPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity())))
-                .reduce(BigDecimal::add).get();
+    @Override
+    public synchronized void delete(Cart cart, long productId) {
+        Long productIdLong = productId;
+        cart.getCartItems().removeIf(cartItem -> productIdLong.equals(cartItem.getProduct().getId()));
 
+        recalculateTotalPrice(cart);
+    }
+
+    private void recalculateTotalPrice(Cart cart) {
+        BigDecimal newTotalPrice = cart.getCartItems().stream()
+                .map(cartItem -> cartItem.getProduct().getPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity())))
+                .reduce(BigDecimal::add).orElse(BigDecimal.valueOf(0));
         cart.setTotalPrice(newTotalPrice);
     }
 }

@@ -4,8 +4,6 @@ import com.es.phoneshop.exceptions.OutOfStockException;
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.CartService;
 import com.es.phoneshop.model.cart.HttpSessionCartService;
-import com.es.phoneshop.model.product.ArrayListProductDao;
-import com.es.phoneshop.model.product.ProductDao;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -21,12 +19,10 @@ public class CartPageServlet extends HttpServlet {
     protected static final String QUANTITY = "quantity";
     protected static final String ERRORS = "errors";
 
-    private ProductDao productDao;
     private CartService cartService;
 
     @Override
     public void init() {
-        productDao = ArrayListProductDao.getInstance();
         cartService = HttpSessionCartService.getInstance();
     }
 
@@ -41,14 +37,19 @@ public class CartPageServlet extends HttpServlet {
         String[] productsIds = request.getParameterValues(PRODUCT_ID);
         String[] quantities = request.getParameterValues(QUANTITY);
 
+        if (productsIds == null) {
+            doGet(request, response);
+            return;
+        }
+
         Cart cart = cartService.getCart(request);
 
         String[] errors = new String[productsIds.length];
-        for(int i = 0; i < productsIds.length; i++) {
-            Long productId = Long.valueOf(productsIds[i]);
+        for (int i = 0; i < productsIds.length; i++) {
+            long productId = Long.parseLong(productsIds[i]);
             Integer quantity = parseQuantity(quantities, errors, i);
 
-            if(quantity != null) {
+            if (quantity != null) {
                 try {
                     cartService.update(cart, productId, quantity);
                 } catch (OutOfStockException exception) {
@@ -58,7 +59,7 @@ public class CartPageServlet extends HttpServlet {
         }
 
         boolean hasError = Arrays.stream(errors).anyMatch(Objects::nonNull);
-        if(hasError) {
+        if (hasError) {
             request.setAttribute(ERRORS, errors);
             doGet(request, response);
         } else {
