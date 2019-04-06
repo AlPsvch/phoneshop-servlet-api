@@ -15,8 +15,7 @@
         <img src="${imageUrl}"/>
         PhoneShop
     </a>
-    <c:url value="/cart" var="cartPage"/>
-    <a href="${cartPage}" style="float: right">Cart: ${cart}</a>
+    <jsp:include page="/cart/minicart"/>
 </header>
 <main>
     <jsp:doBody/>
