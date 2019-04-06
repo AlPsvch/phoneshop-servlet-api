@@ -19,30 +19,23 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ProductListPageServletTest {
+public class MiniCartServletTest {
     @Mock
     private HttpServletRequest request;
     @Mock
     private HttpServletResponse response;
     @Mock
-    private RequestDispatcher requestDispatcher;
-    @Mock
     private ServletConfig servletConfig;
+    @Mock
+    private RequestDispatcher requestDispatcher;
     @Mock
     private HttpSession session;
 
-
-    private ProductListPageServlet servlet = new ProductListPageServlet();
-    private String query = "samsung";
-    private String order = "asc";
-    private String sort = "description";
+    private MiniCartServlet servlet = new MiniCartServlet();
 
     @Before
     public void setup() {
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
-        when(request.getParameter(ProductListPageServlet.QUERY)).thenReturn(query);
-        when(request.getParameter(ProductListPageServlet.ORDER)).thenReturn(order);
-        when(request.getParameter(ProductListPageServlet.SORT)).thenReturn(sort);
         when(request.getSession()).thenReturn(session);
     }
 
@@ -52,6 +45,6 @@ public class ProductListPageServletTest {
 
         servlet.doGet(request, response);
 
-        verify(requestDispatcher).forward(request, response);
+        verify(requestDispatcher).include(request, response);
     }
 }

@@ -13,7 +13,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import java.math.BigDecimal;
 
 import static org.junit.Assert.assertEquals;
@@ -67,5 +66,28 @@ public class CartServiceTest {
     @Test(expected = OutOfStockException.class)
     public void testAddWithNegativeQuantity() throws OutOfStockException {
         cartService.add(cart, 1L, -5);
+    }
+
+    @Test
+    public void testUpdate() throws OutOfStockException {
+        cartService.add(cart, 1L, 1);
+        cartService.update(cart, 1L, 5);
+        assertEquals(5, cartService.getCart(request).getCartItems().get(0).getQuantity());
+        cartService.update(cart, 1L, 2);
+        assertEquals(2, cartService.getCart(request).getCartItems().get(0).getQuantity());
+    }
+
+    @Test(expected = OutOfStockException.class)
+    public void testUpdateWithOverflow() throws OutOfStockException {
+        cartService.add(cart, 1L, 1);
+        cartService.update(cart, 1L, 10);
+    }
+
+    @Test
+    public void testDelete() throws OutOfStockException{
+        cartService.add(cart, 1L, 1);
+        assertEquals(1, cartService.getCart(request).getCartItems().size());
+        cartService.delete(cart, 1L);
+        assertEquals(0, cartService.getCart(request).getCartItems().size());
     }
 }
