@@ -66,7 +66,7 @@ public class HttpSessionCartService implements CartService {
 
         CartItem cartItem = cart.getCartItems().stream()
                 .filter(c -> Long.valueOf(productId).equals(c.getProduct().getId()))
-                .findAny().get();
+                .findAny().orElseThrow(() -> new IllegalArgumentException("There is no product in cart with such ID"));
 
         cartItem.setQuantity(quantity);
 
