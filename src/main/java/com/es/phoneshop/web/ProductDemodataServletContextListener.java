@@ -13,7 +13,7 @@ public class ProductDemodataServletContextListener implements ServletContextList
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         String contextParameter = servletContextEvent.getServletContext().getInitParameter("getProducts");
 
-        if(Boolean.valueOf(contextParameter)){
+        if (Boolean.valueOf(contextParameter)) {
             getSampleProducts();
         }
     }
@@ -23,7 +23,7 @@ public class ProductDemodataServletContextListener implements ServletContextList
 
     }
 
-    private void getSampleProducts(){
+    private void getSampleProducts() {
         ArrayListProductDao arrayListProductDao = ArrayListProductDao.getInstance();
         Currency usd = Currency.getInstance("USD");
         arrayListProductDao.save(new Product(1L, "sgs", "Samsung Galaxy S", new BigDecimal(100), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg"));

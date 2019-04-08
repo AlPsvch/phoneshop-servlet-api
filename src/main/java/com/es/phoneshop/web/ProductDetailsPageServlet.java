@@ -9,6 +9,7 @@ import com.es.phoneshop.model.product.ProductDao;
 import com.es.phoneshop.model.recentProducts.HttpSessionRecentService;
 import com.es.phoneshop.model.recentProducts.RecentService;
 import com.es.phoneshop.model.recentProducts.RecentViews;
+import com.es.phoneshop.util.ProductUtility;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -33,7 +34,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Long productId = getProductId(request);
+        Long productId = ProductUtility.getProductId(request);
         RecentViews recentViews = recentService.getRecentViews(request);
 
         request.setAttribute("recentProducts", recentViews.getRecentlyViewed());
@@ -45,7 +46,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Long productId = getProductId(request);
+        Long productId = ProductUtility.getProductId(request);
         Integer quantity;
 
         try {
@@ -67,13 +68,5 @@ public class ProductDetailsPageServlet extends HttpServlet {
         }
 
         response.sendRedirect(request.getRequestURI() + "?message=Added succesfully&quantity=" + quantity);
-    }
-
-    private Long getProductId(HttpServletRequest request) {
-        String uri = request.getRequestURI();
-        int index = uri.indexOf(request.getServletPath());
-        String productId = uri.substring(index + request.getServletPath().length() + 1);
-
-        return Long.valueOf(productId);
     }
 }

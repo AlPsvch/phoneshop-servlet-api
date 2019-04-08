@@ -6,7 +6,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -19,39 +18,31 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ProductListPageServletTest {
+public class CartItemDeleteServletTest {
     @Mock
     private HttpServletRequest request;
     @Mock
     private HttpServletResponse response;
     @Mock
-    private RequestDispatcher requestDispatcher;
-    @Mock
     private ServletConfig servletConfig;
     @Mock
     private HttpSession session;
 
-
-    private ProductListPageServlet servlet = new ProductListPageServlet();
-    private String query = "samsung";
-    private String order = "asc";
-    private String sort = "description";
+    private CartItemDeleteServlet servlet = new CartItemDeleteServlet();
 
     @Before
     public void setup() {
-        when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
-        when(request.getParameter(ProductListPageServlet.QUERY)).thenReturn(query);
-        when(request.getParameter(ProductListPageServlet.ORDER)).thenReturn(order);
-        when(request.getParameter(ProductListPageServlet.SORT)).thenReturn(sort);
+        when(request.getRequestURI()).thenReturn("/phoneshop-servlet-api/cart/deleteCartItem/1");
+        when(request.getServletPath()).thenReturn("/cart/deleteCartItem");
         when(request.getSession()).thenReturn(session);
     }
 
     @Test
-    public void testDoGet() throws ServletException, IOException {
+    public void testDoPost() throws ServletException, IOException {
         servlet.init(servletConfig);
 
-        servlet.doGet(request, response);
+        servlet.doPost(request, response);
 
-        verify(requestDispatcher).forward(request, response);
+        verify(response).sendRedirect(anyString());
     }
 }

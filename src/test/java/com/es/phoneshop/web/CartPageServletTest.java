@@ -1,8 +1,12 @@
 package com.es.phoneshop.web;
 
+import com.es.phoneshop.exceptions.OutOfStockException;
+import com.es.phoneshop.model.cart.Cart;
+import com.es.phoneshop.model.cart.CartService;
+import com.es.phoneshop.model.cart.HttpSessionCartService;
 import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
-import org.junit.After;
+import com.es.phoneshop.model.product.ProductDao;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +28,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ProductDetailsPageServletTest {
+public class CartPageServletTest {
     @Mock
     private HttpServletRequest request;
     @Mock
@@ -36,22 +40,18 @@ public class ProductDetailsPageServletTest {
     @Mock
     private HttpSession session;
 
-    private ProductDetailsPageServlet servlet = new ProductDetailsPageServlet();
-    private ArrayListProductDao productDao = ArrayListProductDao.getInstance();
+    private CartPageServlet servlet = new CartPageServlet();
+    private ProductDao productDao = ArrayListProductDao.getInstance();
+    private CartService cartService = HttpSessionCartService.getInstance();
+    private Cart cart = new Cart();
+    private String[] productIds = {"1"};
+    private String[] quantities = {"5"};
 
     @Before
     public void setup() {
-        Currency usd = Currency.getInstance("USD");
-        productDao.save(new Product(1L, "sgs", "Samsung Galaxy S", new BigDecimal(100), usd, 5, ""));
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
-        when(request.getRequestURI()).thenReturn("/phoneshop-servlet-api/products/1");
-        when(request.getServletPath()).thenReturn("/products");
         when(request.getSession()).thenReturn(session);
-    }
-
-    @After
-    public void complete() {
-        productDao.delete(1L);
+        when(session.getAttribute(anyString())).thenReturn(cart);
     }
 
     @Test
@@ -64,9 +64,13 @@ public class ProductDetailsPageServletTest {
     }
 
     @Test
-    public void testDoPost() throws ServletException, IOException {
-        String quantity = "1";
-        when(request.getParameter(ProductDetailsPageServlet.QUANTITY)).thenReturn(quantity);
+    public void testDoPost() throws ServletException, IOException, OutOfStockException {
+        Currency usd = Currency.getInstance("USD");
+        productDao.save(new Product(1L, "sgs", "Samsung Galaxy S", new BigDecimal(100), usd, 5, ""));
+
+        when(request.getParameterValues(CartPageServlet.PRODUCT_ID)).thenReturn(productIds);
+        when(request.getParameterValues(CartPageServlet.QUANTITY)).thenReturn(quantities);
+        cartService.add(cart, 1L, 1);
 
         servlet.init(servletConfig);
 

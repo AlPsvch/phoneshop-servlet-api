@@ -6,6 +6,7 @@ import com.es.phoneshop.model.product.Product;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
 import java.util.Optional;
 
 public class HttpSessionCartService implements CartService {
@@ -51,5 +52,39 @@ public class HttpSessionCartService implements CartService {
             CartItem cartItem = new CartItem(product, totalQuantity);
             cart.getCartItems().add(cartItem);
         }
+
+        recalculateTotalPrice(cart);
+    }
+
+    @Override
+    public synchronized void update(Cart cart, long productId, int quantity) throws OutOfStockException {
+        Product product = ArrayListProductDao.getInstance().getProduct(productId);
+
+        if (quantity > product.getStock() || quantity <= 0) {
+            throw new OutOfStockException("Not enough stock. Product stock is " + product.getStock());
+        }
+
+        CartItem cartItem = cart.getCartItems().stream()
+                .filter(c -> Long.valueOf(productId).equals(c.getProduct().getId()))
+                .findAny().orElseThrow(() -> new IllegalArgumentException("There is no product in cart with such ID"));
+
+        cartItem.setQuantity(quantity);
+
+        recalculateTotalPrice(cart);
+    }
+
+    @Override
+    public synchronized void delete(Cart cart, long productId) {
+        Long productIdLong = productId;
+        cart.getCartItems().removeIf(cartItem -> productIdLong.equals(cartItem.getProduct().getId()));
+
+        recalculateTotalPrice(cart);
+    }
+
+    private void recalculateTotalPrice(Cart cart) {
+        BigDecimal newTotalPrice = cart.getCartItems().stream()
+                .map(cartItem -> cartItem.getProduct().getPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity())))
+                .reduce(BigDecimal::add).orElse(BigDecimal.valueOf(0));
+        cart.setTotalPrice(newTotalPrice);
     }
 }
