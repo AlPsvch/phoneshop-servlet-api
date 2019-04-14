@@ -9,19 +9,13 @@ import java.util.stream.Collectors;
 
 public class OrderServiceImpl implements OrderService {
 
-    private static volatile OrderService instance;
+    private static OrderService instance;
 
-    public static OrderService getInstance() {
-        OrderService localInstance = instance;
-        if (localInstance == null) {
-            synchronized (OrderServiceImpl.class) {
-                localInstance = instance;
-                if (localInstance == null) {
-                    instance = localInstance = new OrderServiceImpl();
-                }
-            }
+    public static synchronized OrderService getInstance() {
+        if(instance == null) {
+            instance = new OrderServiceImpl();
         }
-        return localInstance;
+        return instance;
     }
 
     @Override

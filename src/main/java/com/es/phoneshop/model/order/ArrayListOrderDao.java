@@ -7,21 +7,15 @@ import java.util.List;
 
 public class ArrayListOrderDao implements OrderDao {
 
-    private static volatile OrderDao instance;
+    private static OrderDao instance;
 
     private List<Order> orders = new ArrayList<>();
 
-    public static OrderDao getInstance() {
-        OrderDao localInstance = instance;
-        if (localInstance == null) {
-            synchronized (ArrayListOrderDao.class) {
-                localInstance = instance;
-                if (localInstance == null) {
-                    instance = localInstance = new ArrayListOrderDao();
-                }
-            }
+    public static synchronized OrderDao getInstance() {
+        if(instance == null) {
+            instance = new ArrayListOrderDao();
         }
-        return localInstance;
+        return instance;
     }
 
     @Override
