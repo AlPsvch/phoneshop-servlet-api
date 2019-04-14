@@ -35,4 +35,14 @@ public class ArrayListOrderDao implements OrderDao {
                 .findFirst()
                 .orElseThrow(() -> new OrderNotFoundException("Order not found"));
     }
+
+    @Override
+    public synchronized List<Order> findOrders() {
+        return orders;
+    }
+
+    @Override
+    public synchronized void delete(String id) {
+        orders.removeIf(order -> id.equals(order.getSecureId()));
+    }
 }
