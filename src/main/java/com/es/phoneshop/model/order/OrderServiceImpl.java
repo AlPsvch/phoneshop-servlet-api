@@ -51,7 +51,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void calculateTotalOrderCost(Order order) {
-        BigDecimal totalOrderCost = order.getTotalPrice().add(order.getDeliveryCost());
+        BigDecimal totalOrderCost = order.getProductsCost().add(order.getDeliveryCost());
         order.setTotalOrderCost(totalOrderCost);
     }
 }
