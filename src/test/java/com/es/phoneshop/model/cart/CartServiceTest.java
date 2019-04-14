@@ -90,4 +90,12 @@ public class CartServiceTest {
         cartService.delete(cart, 1L);
         assertEquals(0, cartService.getCart(request).getCartItems().size());
     }
+
+    @Test
+    public void testClear() throws OutOfStockException{
+        cartService.add(cart, 1L, 1);
+        assertEquals(1, cartService.getCart(request).getCartItems().size());
+        cartService.clearCart(cart);
+        assertEquals(0, cartService.getCart(request).getCartItems().size());
+    }
 }

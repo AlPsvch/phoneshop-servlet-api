@@ -45,7 +45,7 @@ public class CheckoutPageServlet extends HttpServlet {
         ContactDetails contactDetails;
 
         Optional<ContactDetails> contactDetailsOptional = OrderUtility.getContactDetails(request);
-        if (contactDetailsOptional.isEmpty()) {
+        if (!contactDetailsOptional.isPresent()) {
             doGet(request, response);
             return;
         } else {
