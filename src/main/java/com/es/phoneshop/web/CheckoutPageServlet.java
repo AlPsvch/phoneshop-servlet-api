@@ -32,6 +32,12 @@ public class CheckoutPageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Cart cart = cartService.getCart(request);
+
+        if(cart.getCartItems().isEmpty()) {
+            response.sendRedirect(request.getContextPath() + "/cart?emptyMessage=Cart is empty");
+            return;
+        }
+
         request.setAttribute(ORDER, orderService.createOrder(cart));
         request.setAttribute(DELIVERY, DeliveryMode.getDeliveryModes());
         request.setAttribute(PAYMENT, PaymentMethod.getPaymentMethods());
