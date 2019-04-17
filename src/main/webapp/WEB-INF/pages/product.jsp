@@ -48,4 +48,22 @@
 
     <tags:recent recentProducts="${recentProducts}"/>
 
+    <br><br>
+    <p>
+        <c:if test="${not empty param.reviewError}">
+            <span style="color: red;">${param.reviewError}</span>
+        </c:if>
+        <c:if test="${not empty param.reviewMessage}">
+            <span style="color: forestgreen;">${param.reviewMessage}</span>
+        </c:if>
+        <br>
+        <jsp:include page="/review"/>
+    </p>
+
+    <c:forEach var="comm" items="${submittedComments}">
+        <p>Name: ${comm.name}</p>
+        <p>Rating: ${comm.rating}</p>
+        <p>Comment: ${comm.comment}</p>
+    </c:forEach>
+
 </tags:master>
