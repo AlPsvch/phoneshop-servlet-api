@@ -3,6 +3,7 @@ package com.es.phoneshop.model.cart;
 import com.es.phoneshop.exceptions.OutOfStockException;
 import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
+import com.es.phoneshop.model.product.ProductDao;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -11,6 +12,7 @@ import java.util.Optional;
 
 public class HttpSessionCartService implements CartService {
     private static final String SESSION_CART_KEY = "sessionCart";
+    private ProductDao productDao = ArrayListProductDao.getInstance();
     private static CartService instance;
 
     public static synchronized CartService getInstance() {
@@ -83,6 +85,10 @@ public class HttpSessionCartService implements CartService {
 
     @Override
     public void clearCart(Cart cart) {
+        cart.getCartItems().
+                forEach(cartItem -> productDao.getProduct(cartItem.getProduct().getId())
+                        .setStock(cartItem.getProduct().getStock() - cartItem.getQuantity()));
+
         cart.getCartItems().clear();
         cart.setTotalPrice(BigDecimal.ZERO);
     }

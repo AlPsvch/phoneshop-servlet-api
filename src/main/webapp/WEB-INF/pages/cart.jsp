@@ -15,6 +15,10 @@
         <span style="color:forestgreen">${param.message}</span>
     </c:if>
 
+    <c:if test="${not empty param.emptyMessage}">
+        <span style="color:red">${param.emptyMessage}</span>
+    </c:if>
+
     <c:url value="/cart" var="cartPage"/>
     <form method="post" action="${cartPage}">
         <table>
